@@ -55,6 +55,8 @@ void Led_Init_PB8 (void);
 
 /* USER CODE BEGIN PV */
 uint16_t counter1=0;
+uint16_t status1=0;
+uint16_t repeat=0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,6 +113,7 @@ int main(void)
   while (1)
   {
 	  counter1=TIM10->CNT;
+	  status1=TIM10->SR;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -154,9 +157,9 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV256;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV128;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV16;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
@@ -241,16 +244,30 @@ void Timer10_Init(void){
 	TIM10->ARR=19;
 	TIM10->CCR1=19;
 
+	TIM10->DIER |=TIM_DIER_UIE;
+
+	// Enable TIM10 Interrupt on NVIC
+		NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+		NVIC_SetPriority(TIM1_UP_TIM10_IRQn,2);
+
 }
 
 void Timer10_Enable(void)
 {
+
 	TIM10->CR1 |=TIM_CR1_CEN;
 }
 
 void Timer10_Disable(void)
 {
 	TIM10->CR1 &=~(TIM_CR1_CEN);
+}
+
+void TIM1_UP_TIM10_IRQHandler()
+{
+	repeat=repeat+1;
+	GPIOD->ODR |=GPIO_ODR_OD15;
+	TIM10->SR &=~(TIM_SR_UIF);
 }
 
 void Led_Init_PB8 (void)
