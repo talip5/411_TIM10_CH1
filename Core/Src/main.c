@@ -113,7 +113,7 @@ int main(void)
   while (1)
   {
 	  counter1=TIM10->CNT;
-	  status1=TIM10->SR;
+	  //status1=TIM10->SR;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -144,8 +144,8 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 192;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLN = 96;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 8;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -157,11 +157,11 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV128;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV16;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -211,7 +211,7 @@ void Led_Off()
 
 void time1()
 {
-	for (int var = 0; var < 10000000; ++var) {
+	for (int var = 0; var < 47000; ++var) {
 
 	}
 }
@@ -223,7 +223,7 @@ void Timer10_Init(void){
 	__HAL_RCC_TIM10_CLK_ENABLE();
 
 	// Timer Clock  48 Mhz / 48.000 = 1000 Hz ( 1ms period )
-	TIM10->PSC=18699;
+	TIM10->PSC=47999;
 	//Output Compare Mode
 	TIM10->CCMR1 &=~(TIM_CCMR1_CC1S_0);
 	TIM10->CCMR1 &=~(TIM_CCMR1_CC1S_1);
@@ -241,8 +241,8 @@ void Timer10_Init(void){
 
 
 	// Reload/Set in every 500 ms
-	TIM10->ARR=19;
-	TIM10->CCR1=19;
+	TIM10->ARR=2000;
+	TIM10->CCR1=2000;
 
 	TIM10->DIER |=TIM_DIER_UIE;
 
@@ -265,9 +265,12 @@ void Timer10_Disable(void)
 
 void TIM1_UP_TIM10_IRQHandler()
 {
+	TIM10->SR &=~(TIM_SR_UIF);
+	time1();
 	repeat=repeat+1;
 	GPIOD->ODR |=GPIO_ODR_OD15;
-	TIM10->SR &=~(TIM_SR_UIF);
+
+
 }
 
 void Led_Init_PB8 (void)

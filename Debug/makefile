@@ -60,8 +60,8 @@ all: main-build
 main-build: TIM10_CH1.elf secondary-outputs
 
 # Tool invocations
-TIM10_CH1.elf TIM10_CH1.map: $(OBJS) $(USER_OBJS) C:\ST\411_TIM10_CH1\STM32F411VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TIM10_CH1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\ST\411_TIM10_CH1\STM32F411VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TIM10_CH1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+TIM10_CH1.elf TIM10_CH1.map: $(OBJS) $(USER_OBJS) C:\STM\411_TIM10_CH1\STM32F411VETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "TIM10_CH1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\STM\411_TIM10_CH1\STM32F411VETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TIM10_CH1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
